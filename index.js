@@ -65,7 +65,7 @@ app.get('/api/persons', (req, res) => {
 
 // })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
     .then(personToRemove => {
       personToRemove ? res.status(204).end() : res.status(404).end()
@@ -93,6 +93,22 @@ app.post('/api/persons/', (req, res) => {
     res.json(savedPerson)
   })
 })
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).json({error: 'requested resource cannot be found'})
+}
+app.use(unknownEndpoint)
+
+const errorHandler = (error, req, res, next) => {
+  console.error('Error:', error.message)
+
+  if (error.name === 'CastError' && error.kind == 'ObjectId') {
+    return res.status(400).json({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`Phonebook backend running on port ${port}`)
