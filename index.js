@@ -65,14 +65,13 @@ app.get('/api/persons', (req, res) => {
 
 // })
 
-// app.delete('/api/persons/:id', (req, res) => {
-//   const id = Number(req.params.id)
-//   if (!persons.some(e => e.id === id)) {
-//     return res.status(404).end()
-//   }
-//   persons = persons.filter(e => e.id !== id)
-//   res.status(204).end()
-// })
+app.delete('/api/persons/:id', (req, res) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then(personToRemove => {
+      personToRemove ? res.status(204).end() : res.status(404).end()
+    })
+    .catch(error => next(error))
+})
 
 app.post('/api/persons/', (req, res) => {
   const {name, number} = req.body
