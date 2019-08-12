@@ -74,22 +74,26 @@ app.get('/api/persons', (req, res) => {
 //   res.status(204).end()
 // })
 
-// app.post('/api/persons/', (req, res) => {
-//   const {name, number} = req.body
+app.post('/api/persons/', (req, res) => {
+  const {name, number} = req.body
 
-//   if (!name || !number) {
-//     return res.status(400).json({error: 'missing name or number'})
-//   }
+  if (!name || !number) {
+    return res.status(400).json({error: 'missing name or number'})
+  }
 
-//   if (persons.some(e => e.name === name)) {
-//     return res.status(400).json({error: 'name must be unique'})
-//   }
+  // if (persons.some(e => e.name === name)) {
+  //   return res.status(400).json({error: 'name must be unique'})
+  // }
 
-//   const id = Math.floor(Math.random() * 100000) + 6;
-//   const newPerson = {id, name, number}
-//   persons = persons.concat(newPerson)
-//   res.json(newPerson)
-// })
+  const person = new Person({
+    name,
+    number
+  })
+
+  person.save().then(savedPerson => {
+    res.json(savedPerson)
+  })
+})
 
 app.listen(port, () => {
   console.log(`Phonebook backend running on port ${port}`)
