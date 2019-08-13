@@ -94,6 +94,21 @@ app.post('/api/persons/', (req, res) => {
   })
 })
 
+app.put('/api/persons/:id', (req, res, next) => {
+  const {name, number} = req.body
+
+  const person = {
+    name,
+    number
+  }
+
+  Person.findByIdAndUpdate(req.params.id, person, {new: true})
+    .then(updatedPerson => {
+      res.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+
 const unknownEndpoint = (req, res) => {
   res.status(404).json({error: 'requested resource cannot be found'})
 }
