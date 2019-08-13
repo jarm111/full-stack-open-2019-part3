@@ -1,5 +1,7 @@
+/* globals process */
+
 const mongoose = require('mongoose')
-const uniqueValidator = require('mongoose-unique-validator');
+const uniqueValidator = require('mongoose-unique-validator')
 
 const url = process.env.MONGODB_URI
 
@@ -8,7 +10,7 @@ mongoose.connect(url, { useNewUrlParser: true })
   .catch(error => console.error('DB connect error:', error.message))
 
 // Fix: DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead.
-mongoose.set('useCreateIndex', true);
+mongoose.set('useCreateIndex', true)
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -22,7 +24,7 @@ const personSchema = new mongoose.Schema({
   }
 })
 
-personSchema.plugin(uniqueValidator);
+personSchema.plugin(uniqueValidator)
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {

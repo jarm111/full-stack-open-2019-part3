@@ -1,3 +1,5 @@
+/* globals process */
+
 const mongoose = require('mongoose')
 const [ , , password, name, number] = process.argv
 const dbName = 'phonebook'
@@ -7,7 +9,7 @@ if (!password) {
   process.exit(1)
 }
 
-const url = 
+const url =
   `mongodb+srv://fs-open-user:${password}@fullstack-open-2019-s1lal.mongodb.net/${dbName}?retryWrites=true&w=majority`
 
 mongoose.connect(url, { useNewUrlParser: true })
@@ -33,11 +35,11 @@ const addPerson = () => {
     name,
     number
   })
-  
-  person.save().then(res => {
+
+  person.save().then(() => {
     console.log(`added ${name} number ${number} to phonebook`)
     mongoose.connection.close()
-  })  
+  })
 }
 
 (name && number) ? addPerson() : findPerson()

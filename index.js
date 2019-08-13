@@ -1,3 +1,5 @@
+/* globals process */
+
 require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -11,7 +13,7 @@ const port = process.env.PORT
 app.use(bodyParser.json())
 app.use(cors())
 
-morgan.token('body', (req, res) => JSON.stringify(req.body))
+morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.use(express.static('build'))
@@ -20,7 +22,7 @@ app.get('/info', (req, res) => {
   Person.find({})
     .then(people => people ? people.length : 0)
     .then(entries => {
-      const currentTime = new Date();
+      const currentTime = new Date()
       const text = `
         <p>Phonebook has info for ${entries} people</p>
         <p>${currentTime}</p>
@@ -52,10 +54,10 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.post('/api/persons/', (req, res, next) => {
-  const {name, number} = req.body
+  const { name, number } = req.body
 
   if (!name || !number) {
-    return res.status(400).json({error: 'missing name or number'})
+    return res.status(400).json({ error: 'missing name or number' })
   }
 
   const person = new Person({
@@ -71,14 +73,14 @@ app.post('/api/persons/', (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-  const {name, number} = req.body
+  const { name, number } = req.body
 
   const person = {
     name,
     number
   }
 
-  Person.findByIdAndUpdate(req.params.id, person, {new: true})
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
     .then(updatedPerson => {
       res.json(updatedPerson)
     })
@@ -86,14 +88,14 @@ app.put('/api/persons/:id', (req, res, next) => {
 })
 
 const unknownEndpoint = (req, res) => {
-  res.status(404).json({error: 'requested resource cannot be found'})
+  res.status(404).json({ error: 'requested resource cannot be found' })
 }
 app.use(unknownEndpoint)
 
 const errorHandler = (error, req, res, next) => {
   console.error('Error:', error.message)
 
-  if (error.name === 'CastError' && error.kind == 'ObjectId') {
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return res.status(400).json({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message })
